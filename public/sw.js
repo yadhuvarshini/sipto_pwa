@@ -1,22 +1,25 @@
 const staticCacheName = 'site-static-v2';
 const dynamicCacheName = 'site-dynamic-v1';
+
 const assets = [
   '/',
   '/index.html',
   '/js/app.js',
-  '/js/ui.js',
+  'js/ui.js',
   '/js/materialize.min.js',
   '/css/styles.css',
   '/css/materialize.min.css',
-  '/img/dish.png',
   'https://fonts.googleapis.com/icon?family=Material+Icons',
   'https://fonts.gstatic.com/s/materialicons/v47/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2',
-  '/pages/fallback.html'
+  '/pages/fallback.html',
+  '/livedata.html',
+  'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
+  'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd',
 ];
 
 // install event
 self.addEventListener('install', evt => {
-  //console.log('service worker installed');
+  console.log('service worker installed');
   evt.waitUntil(
     caches.open(staticCacheName).then((cache) => {
       console.log('caching shell assets');
@@ -25,6 +28,19 @@ self.addEventListener('install', evt => {
   );
 });
 
+
+self.addEventListener('activate', evt => {
+  console.log('service worker activated');
+  evt.waitUntil(
+    caches.keys().then(keys => {
+      //console.log(keys);
+      return Promise.all(keys
+        .filter(key => key !== staticCacheName && key !== dynamicCacheName)
+        .map(key => caches.delete(key))
+      );
+    })
+  );
+});
 
 // cache size limit function
 const limitCacheSize = (name, size) => {
@@ -40,18 +56,7 @@ const limitCacheSize = (name, size) => {
 
 
 // activate event
-self.addEventListener('activate', evt => {
-  //console.log('service worker activated');
-  evt.waitUntil(
-    caches.keys().then(keys => {
-      //console.log(keys);
-      return Promise.all(keys
-        .filter(key => key !== staticCacheName && key !== dynamicCacheName)
-        .map(key => caches.delete(key))
-      );
-    })
-  );
-});
+
 
 // fetch event
 self.addEventListener('fetch', evt => {
@@ -62,7 +67,7 @@ self.addEventListener('fetch', evt => {
         return caches.open(dynamicCacheName).then(cache => {
           cache.put(evt.request.url, fetchRes.clone());
           // check cached items size
-          limitCacheSize(dynamicCacheName, 15);
+          limitCacheSize(dynamicCacheName, 45);
           return fetchRes;
         })
       });
