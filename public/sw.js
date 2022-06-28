@@ -12,9 +12,6 @@ const assets = [
   'https://fonts.googleapis.com/icon?family=Material+Icons',
   'https://fonts.gstatic.com/s/materialicons/v47/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2',
   '/pages/fallback.html',
-  '/livedata.html',
-  'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
-  'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd',
 ];
 
 // install event
